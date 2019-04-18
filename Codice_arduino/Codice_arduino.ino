@@ -6,7 +6,7 @@
 #define NUMCHANNELS 6 // 6 canali se ci sono sei shields
 #define HEADERLEN 4
 #define PACKETLEN (NUMCHANNELS * 2 + HEADERLEN + 1)
-#define SAMPFREQ 256                      // ADC sampling rate 256
+#define SAMPFREQ 2048                      // ADC sampling rate 2048
 #define TIMER2VAL (1024/(SAMPFREQ))       // Set 256Hz sampling frequency  (TIMER2VAL=4)                  
 #define LED1  13
 #define CAL_SIG 9
@@ -140,7 +140,7 @@ void Timer2_Overflow_ISR()
 	 
   // Send Packet
   for(TXIndex=0;TXIndex<17;TXIndex++){
-    //Serial.write(TXBuf[TXIndex]); //Scrive sulla porta seriale in byte tutti i 17 campi del pacchetto e li scrive in esadecimale
+    Serial.write(TXBuf[TXIndex]); //Scrive sulla porta seriale in byte tutti i 17 campi del pacchetto e li scrive in esadecimale
    }
   
   // Increment the packet counter
