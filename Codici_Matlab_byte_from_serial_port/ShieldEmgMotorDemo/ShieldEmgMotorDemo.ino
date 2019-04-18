@@ -1,5 +1,4 @@
 
-/**********************************************************/
 /* Demo program for:                                      */
 /*    Board: SHIELD-EKG/EMG + Olimexino328                */
 /*  Manufacture: OLIMEX                                   */
