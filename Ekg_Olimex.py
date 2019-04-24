@@ -1,17 +1,14 @@
 from serial import Serial
 from math import ceil
-# import binascii
-# import codecs
 import numpy as np
 import matplotlib.pyplot as plt
-# import scipy.signal
 
 ### PARAMETERS ###
 
 N=100 # number of byte (every packet is 17 bytes)
 Packet_Dimension=17
 
-##################
+
 
 ### FUNCTIONS ###
 
@@ -42,7 +39,7 @@ def GetaData(byte_string):
 def Save_Data_txt(filename,data):
     with open(filename, 'w') as f:
         for item in data:
-            f.write("%s," % item)
+            f.write("%s\n" % item)
     f.close()
 
 ### MAIN ###
