@@ -135,10 +135,10 @@ void Timer2_Overflow_ISR()
     TXBuf[((2*CurrentCh) + HEADERLEN + 1)] = ((unsigned char)(ADC_Value & 0x00FF));	// Write Low Byte (Prendo gli ultimi 8 bit cioè quelli meno significativi)
   }
 
-  Serial.write(TXBuf[0]);
+  //Serial.write(TXBuf[0]);
   // Send Packet
   for(TXIndex=0;TXIndex<17;TXIndex++){
-    // Serial.write(TXBuf[TXIndex]); //Scrive sulla porta seriale in byte tutti i 17 campi del pacchetto e li scrive in esadecimale
+    Serial.write(TXBuf[TXIndex]); //Scrive sulla porta seriale in byte tutti i 17 campi del pacchetto e li scrive in esadecimale
    }
   
   // Increment the packet counter
