@@ -1,0 +1,4 @@
+1)Respiration, electrode impedance changes and body movements cause baseline drift in the ECG signals: this problem is assessed with a median filter(done)
+
+2)Removal of the baseline drift is followed by removal of high amplitude noise usually caused by specifications of natural noise by the electromygraphic 
+  interference: banpass at 5Hz/100Hz(to be done: elliptic filter should be the most apropriated --> need of understanding the samplig frequency of Arduino: baude rate? 256Hz transmission? analorread() function sampling rate?)
