@@ -5,7 +5,7 @@ import scipy.signal as signal
 
 ### PARAMETERS
 
-fs=9600 #Hz
+fs=256 #Hz
 lowpass=5#Hz
 highpass=100 #Hz
 order=1 #Bandpass filter order
@@ -26,10 +26,8 @@ def PSD(data,fs):
     f1 = plt.figure()
     ax1 = f1.add_subplot(111)
     ax1.plot(f,Pxx_den)
-
-
-    # plt.xlabel('frequency [Hz]')
-    # plt.ylabel('PSD')
+    plt.xlabel('frequency [Hz]')
+    plt.ylabel('PSD')
 
 def Band_Pass_filter(low_cut,high_cut,order,fs,data):
     nyq = 0.5 * fs
@@ -49,7 +47,8 @@ if "__name__==__main__":
     band_pass_filtered_data=Band_Pass_filter(lowpass,highpass,order,fs,data)
     median_filtered_data=signal.medfilt(band_pass_filtered_data,window_size) # median filter preserves edges better than the moving average filter
 
-    # PSD(data,fs)
+    PSD(data,fs)
+    plt.show()
     # PSD(band_pass_filtered_data,fs)
     # plt.show()
 
