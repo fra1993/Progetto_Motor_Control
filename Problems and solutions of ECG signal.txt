@@ -1,4 +1,33 @@
 1)Respiration, electrode impedance changes and body movements cause baseline drift in the ECG signals: this problem is assessed with a median filter(done)
 
 2)Removal of the baseline drift is followed by removal of high amplitude noise usually caused by specifications of natural noise by the electromygraphic 
-  interference: banpass at 5Hz/100Hz(to be done: elliptic filter should be the most apropriated --> need of understanding the samplig frequency of Arduino: baude rate? 256Hz transmission? analorread() function sampling rate?)
+  interference: banpass at 5Hz/100Hz(to be done: elliptic filter should be the most apropriated --> need of understanding the samplig frequency of Arduino:
+ baude rate? 256Hz transmission? analorread() function sampling rate (9600Hz)?)
+
+3) sampling freq. of adc is around 9600Hz -> is this the sampling rate that should be used for an analisys in the frequency domain (PSD,filter design..)?
+4)Olimex ha 6 canali.. quale si legge per la misura?
+
+5) Besselworth filter with cutoff 40Hz: cuts all frequencies above 40 Hz (BIG PROBLEM FOR ECG SIGNAL WITH A BAND 5-500Hz)
+
+6) In all measures there is an artifact at 40Hz: is this linked with the besselwoth filter of point 5)?
+
+7) Editing busselworth filter:
+
+The last filter does not filter mains electricity hum, for sure. You would get 50Hz hum (if in Europe) and 60Hz hum (if in USA) that you have to filter yourself.
+
+The filter takes effect at 40Hz indeed, however the filter does NOT cut everything over 40Hz. This last filter has a 19.2dB rolloff per octave.
+
+Please note that we don’t encourage hardware modifications and doing such you would lose your warranty! 
+
+Also, please, consider that if you remove this filter there would be strong interference from the input power, so you should make make custom filtering of the supply. 
+
+That being said you can remove the 40Hz filter if you remove resistors R14 and R18 and close the pads by connecting the pads with a wire accordingly. Note that the pads you should connect are the ones on the outer side of the Bessel filter. Please check the schematic for exact positions (use the search for R14 and R18): https://www.olimex.com/Products/Duino/Shields/SHIELD-EKG-EMG/resources/SHIELD-EKG-EMG-REV-B-SCHEMATIC.pdf
+ 
+Again keep in mind we don’t encourage hardware modifications, these might brick the your device!
+
+8) Nel software di Olimex il periodo di campionamento è il periodo del timer che controlla l’acquisizione. Per un segnale ECG 1-2 kHz sono sufficienti.  
+
+Volendo essere supesicuri, può salvare in Arduino ad ogni acquisizione anche l’istante di tempo (timestamp) e inviarlo alla seriale insieme ai dati. 
+Tutte le elaborazioni tipo filtraggio, analisi spettrale ecc presuppongono che i dati siano campionati con periodo costante. In Arduino non c’è un clock hardware che controlla l’acquisizione ma tutto è regolato via software. Anche il timer usato da Olimex è software non hardware quindi non è precisissimo.
+Usando i timestamp può innanzitutto controllare quanto è accurato il periodo di campionamento, inoltre può usare questa informazione per ricampionare (interp1()) i dati a periodo costante.
+
