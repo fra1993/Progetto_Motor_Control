@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 
 ### PARAMETERS ###
 
-N=100 # number of byte (every packet is 17 bytes)
-Packet_Dimension=17
+N=1000 # number of byte (every packet is 17 bytes)
+Packet_Dimension=19
+baudrate=57600
 
 
 
@@ -22,19 +23,24 @@ def Initiate_serial_comunication(port_ID,baudrate_in):
 def GetaData(byte_string):
     i = 0
     sw = np.zeros(ceil(N / Packet_Dimension))
+    sw_T = np.zeros(ceil(N / Packet_Dimension))
+    sw_T_index = 0
     sw_index = 0
     while i < (len(s) - 1):
         if (hex(s[i]) == '0xa5') & (hex(s[i + 1]) == '0x5a'):
             try:
                 temp = (int(hex(s[i + 4]), 16)) * 256 + (int(hex(s[i + 5]), 16))
+                temp_T = (int(hex(s[i + 16]), 16)) * 256 + (int(hex(s[i + 17]), 16))
                 sw[sw_index] = temp
+                sw_T[sw_T_index] = temp_T
                 sw_index = sw_index + 1
+                sw_T_index = sw_T_index + 1
             except Exception as Exc:
                 print(Exc)
-                print('With byte string of lenght: ',len(s))
-                print('Out of range index: ', i+5)
+                print('With byte string of lenght: ', len(s))
+                print('Out of range index: ', i + 17)
         i = i + 1
-    return sw
+    return sw,sw_T
 
 def Save_Data_txt(filename,data):
     with open(filename, 'w') as f:
@@ -45,10 +51,12 @@ def Save_Data_txt(filename,data):
 ### MAIN ###
 
 if '__name__==__main':
-    ser=Initiate_serial_comunication('COM3',57600) #starting comunication
+    ser=Initiate_serial_comunication('COM3',baudrate) #starting comunication
     s = ser.read(N) #reading N bytes from the serial port
-    data=GetaData(s) #data of voltage (int) measured from Arduino's ADC
-    Save_Data_txt('prova.txt', data)
+    data,time=GetaData(s) #data of voltage (int) measured from Arduino's ADC
+    Save_Data_txt('Data.txt', data)
+    Save_Data_txt('Time.txt', time)
+
 
 
 
