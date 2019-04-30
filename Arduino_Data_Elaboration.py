@@ -5,8 +5,8 @@ import scipy.signal as signal
 
 ### PARAMETERS
 figures_param=1
-fs=256 #Hz
-lowpass=5#Hz
+fs=500 #Hz
+lowpass=5 #Hz
 highpass=100 #Hz
 order=1 #Bandpass filter order
 window_size = 5 # For median filtering
