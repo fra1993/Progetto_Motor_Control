@@ -44,15 +44,16 @@ struct Olimexino328_packet
 /**********************************************************/
 #include <compat/deprecated.h>
 #include <FlexiTimer2.h>
+#include <Time.h>
 
 
 // All definitions
+#define TimeBytes 4
 #define NUMCHANNELS 6 // 6 canali se ci sono sei shields
 #define HEADERLEN 4
-#define PACKETLEN (NUMCHANNELS * 2 + HEADERLEN + 1)
-#define SAMPFREQ 2048                      // ADC sampling rate 2048
-#define TIMER2VAL (1024/(SAMPFREQ))       // Set 256Hz sampling frequency  (TIMER2VAL=4)                  
+#define PACKETLEN (NUMCHANNELS * 2 + HEADERLEN + 1 + TimeBytes)
 #define SAMPFREQ 512                     // ADC sampling rate 512
+#define TIMER2VAL (1024/(SAMPFREQ))       // Set 500Hz sampling frequency  (TIMER2VAL=4)                  
 #define LED1  13
 #define CAL_SIG 9
 
@@ -66,7 +67,8 @@ volatile unsigned char TXIndex;           //Next byte to write in the transmissi
 volatile unsigned char CurrentCh;         //Current channel being sampled.
 volatile unsigned char counter = 0;	  //Additional divider used to generate CAL_SIG
 volatile unsigned int ADC_Value = 0;	  //ADC current value
-
+unsigned long CurrentTime;     // Current time
+unsigned long StartTime; 
 //~~~~~~~~~~
 // Functions
 //~~~~~~~~~~
@@ -109,8 +111,10 @@ void toggle_GAL_SIG(void){
 /*    Action: Initializes all peripherals           */
 /****************************************************/
 void setup() {
-
+  
  noInterrupts();  // Disable all interrupts before initialization
+ 
+ StartTime=micros();
  
  // LED1=13
  pinMode(LED1, OUTPUT);  //Setup LED1 direction
@@ -121,7 +125,7 @@ void setup() {
  
  TXBuf[0] = 0xa5;    //Sync 0
  TXBuf[1] = 0x5a;    //Sync 1
- TXBuf[2] = 2;       //Protocol version
+ TXBuf[2] = 2;    //Protocol version
  TXBuf[3] = 0;       //Packet counter 
  TXBuf[4] = 0x02;    //CH1 High Byte
  TXBuf[5] = 0x00;    //CH1 Low Byte
@@ -135,7 +139,11 @@ void setup() {
  TXBuf[13] = 0x00;   //CH5 Low Byte
  TXBuf[14] = 0x02;   //CH6 High Byte
  TXBuf[15] = 0x00;   //CH6 Low Byte 
- TXBuf[2 * NUMCHANNELS + HEADERLEN] =  0x01;	// Switches state
+ TXBuf[16] = 0x00;   //Current time Low Byte 
+ TXBuf[17] = 0x00;   //Current time Low Byte 
+ TXBuf[18] = ((unsigned char)((StartTime & 0xFF00) >> 8));    
+ TXBuf[19] = ((unsigned char)(StartTime & 0x00FF));      
+ TXBuf[2 * NUMCHANNELS + HEADERLEN + TimeBytes] =  0x01;	// Switches state
 
  // Timer2
  // Timer2 is used to setup the analag channels sampling frequency and packet update.
@@ -180,9 +188,13 @@ void Timer2_Overflow_ISR()
     TXBuf[((2*CurrentCh) + HEADERLEN + 1)] = ((unsigned char)(ADC_Value & 0x00FF));	// Write Low Byte (Prendo gli ultimi 8 bit cioè quelli meno significativi)
   }
 
-  //Serial.write(TXBuf[0]);
+  // Sending time information per sample
+  CurrentTime=micros();
+  TXBuf[16] = ((unsigned char)((CurrentTime & 0xFF00) >> 8));  
+  TXBuf[17] = ((unsigned char)(CurrentTime & 0x00FF));
+  
   // Send Packet
-  for(TXIndex=0;TXIndex<17;TXIndex++){
+  for(TXIndex=0;TXIndex<PACKETLEN;TXIndex++){
     Serial.write(TXBuf[TXIndex]); //Scrive sulla porta seriale in byte tutti i 17 campi del pacchetto e li scrive in esadecimale
    }
   
