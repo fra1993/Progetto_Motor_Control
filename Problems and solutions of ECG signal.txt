@@ -1,15 +1,17 @@
 1)Respiration, electrode impedance changes and body movements cause baseline drift in the ECG signals: this problem is assessed with a median filter(done)
 
 2)Removal of the baseline drift is followed by removal of high amplitude noise usually caused by specifications of natural noise by the electromygraphic 
-  interference: banpass at 5Hz/100Hz(to be done: elliptic filter should be the most apropriated --> need of understanding the samplig frequency of Arduino:
- baude rate? 256Hz transmission? analorread() function sampling rate (9600Hz)?)
+  interference: banpass at 5Hz/100Hz(to be done: elliptic filter should be the most apropriated --> need of understanding the samplig frequency of Arduino:(
+  sampling rate fixed to 500 Hz - done)
 
-3) sampling freq. of adc is around 9600Hz -> is this the sampling rate that should be used for an analisys in the frequency domain (PSD,filter design..)?
-4)Olimex ha 6 canali.. quale si legge per la misura?
+3)Sampling freq. of adc is around 9600Hz -> is this the sampling rate that should be used for an analisys in the frequency domain (PSD,filter design..)?
+  (this frequency is not precise but it is aroung 500 Hz - done)
 
-5) Besselworth filter with cutoff 40Hz: cuts all frequencies above 40 Hz (BIG PROBLEM FOR ECG SIGNAL WITH A BAND 5-500Hz)
+4) Olimex ha 6 canali.. quale si legge per la misura?
 
-6) In all measures there is an artifact at 40Hz: is this linked with the besselwoth filter of point 5)?
+5) Besselworth filter with cutoff 40Hz: cuts all frequencies above 40 Hz (No prob: heart rate is around 1/2 Hz - done) 
+
+6) In all measures there is an artifact at 40Hz: is this linked with the besselwoth filter of point 5 (most likely it is due to the 50 Hz noise from the electrical line)?
 
 7) Editing busselworth filter:
 
@@ -31,3 +33,5 @@ Volendo essere supesicuri, può salvare in Arduino ad ogni acquisizione anche l’i
 Tutte le elaborazioni tipo filtraggio, analisi spettrale ecc presuppongono che i dati siano campionati con periodo costante. In Arduino non c’è un clock hardware che controlla l’acquisizione ma tutto è regolato via software. Anche il timer usato da Olimex è software non hardware quindi non è precisissimo.
 Usando i timestamp può innanzitutto controllare quanto è accurato il periodo di campionamento, inoltre può usare questa informazione per ricampionare (interp1()) i dati a periodo costante.
 
+9)fibrillazione atriale e extrasistole dovrebbero essere cose semplici da rilevare
+10) articolo nuovo su machine learning

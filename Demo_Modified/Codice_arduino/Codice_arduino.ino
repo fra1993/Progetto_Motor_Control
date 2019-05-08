@@ -53,7 +53,7 @@ struct Olimexino328_packet
 #define HEADERLEN 4
 #define PACKETLEN (NUMCHANNELS * 2 + HEADERLEN + 1 + TimeBytes)
 #define SAMPFREQ 512                     // ADC sampling rate 512
-#define TIMER2VAL (1024/(SAMPFREQ))       // Set 500Hz sampling frequency  (TIMER2VAL=4)                  
+#define TIMER2VAL (1024/(SAMPFREQ))       // Set 500Hz sampling frequency  (TIMER2VAL=2)                  
 #define LED1  13
 #define CAL_SIG 9
 
